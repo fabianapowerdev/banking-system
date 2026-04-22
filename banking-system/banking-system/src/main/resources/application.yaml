@@ -1,3 +1,9 @@
 spring:
   application:
     name: banking-system
+
+  profiles:
+    active: dev
+
+  jackson:
+    time-zone: America/Sao_Paulo
