@@ -1,0 +1,116 @@
+pipeline {
+    agent any
+
+    // Variáveis globais da nossa pipeline
+    environment {
+        DOCKER_IMAGE = 'seu-usuario-dockerhub/banking-system'
+        DOCKER_TAG = "${env.BUILD_ID}" // Usa o número do build do Jenkins como versão
+    }
+
+    tools {
+        jdk 'Java-25'
+    }
+
+    stages {
+        stage('1. Checkout do Código') {
+            steps {
+                // Baixa o código mais recente do branch atual do GitHub
+                checkout scm
+            }
+        }
+
+        stage('2. Testes Automatizados') {
+            steps {
+                // Executa os testes. Isso ativará automaticamente o 'application-test.yml'
+                // e o Testcontainers subirá um banco efêmero.
+                sh './mvnw clean test'
+            }
+        }
+
+        stage('3. Build do Pacote (JAR)') {
+            steps {
+                // Gera o JAR ignorando os testes (pois já passaram no estágio anterior)
+                sh './mvnw package -DskipTests'
+            }
+        }
+
+        stage('4. Build da Imagem Docker') {
+            steps {
+                script {
+                    // Lê o nosso Dockerfile e cria a imagem
+                    dockerImage = docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}")
+                }
+            }
+        }
+
+        stage('5. Push para o Docker Hub') {
+            steps {
+                script {
+                    // O ID 'dockerhub-creds' será criado no Passo 7
+                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub-creds') {
+                        dockerImage.push()
+                        dockerImage.push('latest') // Atualiza a tag latest também
+                    }
+                }
+            }
+        }
+
+        /*stage('6. Deploy em Homologação (HML)') {
+            steps {
+                // Simulação de deploy no ambiente de Homologação.
+                // Injetamos as variáveis de ambiente necessárias e ativamos o profile 'hml'.
+                // O Flyway rodará automaticamente ao subir este container apontando para o banco HML.
+                sh '''
+                    docker stop app-hml || true
+                    docker rm app-hml || true
+                    docker run -d -p 8081:8080 --name app-hml \
+                    -e SPRING_PROFILES_ACTIVE=hml \
+                    -e HML_DB_URL=jdbc:postgresql://seu-banco-hml:5432/hml_db \
+                    -e HML_DB_USERNAME=usuario_hml \
+                    -e HML_DB_PASSWORD=senha_hml \
+                    ${DOCKER_IMAGE}:${DOCKER_TAG}
+                '''
+            }
+        }*/
+
+        /*stage('7. Aprovação para Produção') {
+            steps {
+                // Uma boa prática: a pipeline pausa e aguarda um humano clicar em "Aprovar" no painel do Jenkins
+                timeout(time: 1, unit: 'DAYS') {
+                    input message: 'Aprovar deploy em Produção (PRD)?'
+                }
+            }
+        }
+
+        stage('8. Deploy em Produção (PRD)') {
+            steps {
+                // Usamos as credenciais seguras do Jenkins para não expor a senha de PRD
+                withCredentials([string(credentialsId: 'prd-db-password', variable: 'SENHA_PRD')]) {
+                    sh '''
+                        docker stop app-prd || true
+                        docker rm app-prd || true
+                        docker run -d -p 8082:8080 --name app-prd \
+                        -e SPRING_PROFILES_ACTIVE=prd \
+                        -e PRD_DB_URL=jdbc:postgresql://seu-banco-prd:5432/prd_db \
+                        -e PRD_DB_USERNAME=usuario_prd \
+                        -e PRD_DB_PASSWORD=${SENHA_PRD} \
+                        ${DOCKER_IMAGE}:${DOCKER_TAG}
+                    '''
+                }
+            }
+        }*/
+    }
+
+    // Ações executadas no final, independente de sucesso ou falha
+    post {
+        always {
+            cleanWs() // Limpa os arquivos temporários do servidor Jenkins para economizar disco
+        }
+        success {
+            echo '✅ Pipeline concluída e sistema no ar!'
+        }
+        failure {
+            echo '❌ Falha na pipeline. Verifique os logs.'
+        }
+    }
+}
