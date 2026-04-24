@@ -7,9 +7,7 @@ pipeline {
         DOCKER_TAG = "${env.BUILD_ID}" // Usa o número do build do Jenkins como versão
     }
 
-    tools {
-        jdk 'Java-25'
-    }
+    //tools {  jdk 'Java-25'     }
 
     stages {
         stage('1. Checkout do Código') {
