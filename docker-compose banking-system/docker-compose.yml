@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  # O Banco de Dados que servirá o ambiente de Desenvolvimento
+  postgres-db:
+    image: postgres:15-alpine
+    container_name: app_postgres
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: adminpassword
+      POSTGRES_DB: app_database
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  # O Servidor Jenkins (O Maestro)
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: app_jenkins
+    privileged: true
+    user: root # Necessário para interagir com o Docker do host
+    ports:
+      - "8080:8080"   # Interface Web
+      - "50000:50000" # Comunicação com agentes
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock # Permite ao Jenkins criar imagens Docker
+    networks:
+      - app-network
+    restart: unless-stopped
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  pg_data:
+  jenkins_home:
