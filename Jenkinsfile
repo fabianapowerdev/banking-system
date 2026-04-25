@@ -17,13 +17,11 @@ pipeline {
             }
         }
 
-        stage('2. Testes Automatizados') {
-            steps {
-                // Executa os testes. Isso ativará automaticamente o 'application-test.yml'
-                // e o Testcontainers subirá um banco efêmero.
-                sh './mvnw clean test'
-            }
-        }
+     stage('2. Testes Automatizados') {
+         steps {
+             sh './mvnw clean test'
+         }
+     }
 
         stage('3. Build do Pacote (JAR)') {
             steps {
