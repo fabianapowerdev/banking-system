@@ -30,7 +30,7 @@ pipeline {
             }
         }
 
-        stage('4. Build da Imagem Docker') {
+        /*stage('4. Build da Imagem Docker') {
             steps {
                 script {
                     // Lê o nosso Dockerfile e cria a imagem
@@ -49,7 +49,7 @@ pipeline {
                     }
                 }
             }
-        }
+        }*/
 
         /*stage('6. Deploy em Homologação (HML)') {
             steps {
