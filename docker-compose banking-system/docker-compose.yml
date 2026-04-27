@@ -25,6 +25,10 @@ services:
     ports:
       - "8080:8080"   # Interface Web
       - "50000:50000" # Comunicação com agentes
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
+
     volumes:
       - jenkins_home:/var/jenkins_home
       - /var/run/docker.sock:/var/run/docker.sock # Permite ao Jenkins criar imagens Docker

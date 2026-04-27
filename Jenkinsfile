@@ -3,7 +3,7 @@ pipeline {
 
     // Variáveis globais da nossa pipeline
     environment {
-        DOCKER_IMAGE = 'biazita.santo@hotmail.com/banking-system'
+        DOCKER_IMAGE = 'fabianaacf'
         DOCKER_TAG = "${env.BUILD_ID}" // Usa o número do build do Jenkins como versão
     }
 
