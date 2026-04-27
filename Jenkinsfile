@@ -30,7 +30,7 @@ pipeline {
             }
         }
 
-        /*stage('4. Build da Imagem Docker') {
+        stage('4. Build da Imagem Docker') {
             steps {
                 script {
                     // Lê o nosso Dockerfile e cria a imagem
@@ -49,9 +49,9 @@ pipeline {
                     }
                 }
             }
-        }*/
+        }
 
-        /*stage('6. Deploy em Homologação (HML)') {
+        stage('6. Deploy em Homologação (HML)') {
             steps {
                 // Simulação de deploy no ambiente de Homologação.
                 // Injetamos as variáveis de ambiente necessárias e ativamos o profile 'hml'.
@@ -67,9 +67,9 @@ pipeline {
                     ${DOCKER_IMAGE}:${DOCKER_TAG}
                 '''
             }
-        }*/
+        }
 
-        /*stage('7. Aprovação para Produção') {
+        stage('7. Aprovação para Produção') {
             steps {
                 // Uma boa prática: a pipeline pausa e aguarda um humano clicar em "Aprovar" no painel do Jenkins
                 timeout(time: 1, unit: 'DAYS') {
@@ -94,7 +94,7 @@ pipeline {
                     '''
                 }
             }
-        }*/
+        }
     }
 
     // Ações executadas no final, independente de sucesso ou falha
