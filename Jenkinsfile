@@ -3,7 +3,7 @@ pipeline {
 
     // Variáveis globais da nossa pipeline
     environment {
-        DOCKER_IMAGE = 'fabianaacf'
+        DOCKER_IMAGE = 'banking-system'
         DOCKER_TAG = "${env.BUILD_ID}" // Usa o número do build do Jenkins como versão
     }
 
@@ -45,7 +45,7 @@ pipeline {
             steps {
                 script {
                     // O ID 'dockerhub-creds' será criado no Passo 7
-                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub-creds') {
+                    docker.withRegistry('', 'dockerhub-creds') {
                         dockerImage.push()
                         dockerImage.push('latest') // Atualiza a tag latest também
                     }
