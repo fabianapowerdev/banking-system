@@ -4,6 +4,9 @@
 FROM eclipse-temurin:17-jdk-alpine AS builder
 WORKDIR /app
 COPY . .
+
+# Instala o curl para evitar quedas no download do Maven
+RUN apk add --no-cache curl
 RUN ./mvnw clean package -DskipTests
 RUN java -Djarmode=layertools -jar target/*.jar extract
 
