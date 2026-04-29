@@ -21,7 +21,7 @@ pipeline {
 
      stage('2. Testes Automatizados') {
          steps {
-             sh './mvnw clean test'
+             sh './mvnw clean test -U'
          }
      }
 
