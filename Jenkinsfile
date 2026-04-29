@@ -7,8 +7,8 @@ pipeline {
         DOCKER_TAG = "${env.BUILD_ID}" // Usa o número do build do Jenkins como versão
     }
 
-    tools {  jdk 'Java-17'
-    dockerTool 'docker'
+    tools {
+        jdk 'Java-17'
     }
 
     stages {
