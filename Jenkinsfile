@@ -1,10 +1,14 @@
 pipeline {
     agent any
 
-    // Variáveis globais da nossa pipeline
     environment {
-        DOCKER_IMAGE = 'banking-system'
-        DOCKER_TAG = "${env.BUILD_ID}" // Usa o número do build do Jenkins como versão
+        // 1. Invoca a credencial. O Jenkins cria a variável DOCKER_CREDS_USR secretamente
+        DOCKER_CREDS = credentials('dockerhub-creds')
+
+        // 2. Monta a imagem juntando o usuário do cofre e o nome da Job do Jenkins
+        DOCKER_IMAGE = "${DOCKER_CREDS_USR}/${env.JOB_BASE_NAME}"
+
+        DOCKER_TAG = "${env.BUILD_ID}"
     }
 
     tools {
